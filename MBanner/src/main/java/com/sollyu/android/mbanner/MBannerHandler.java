@@ -8,10 +8,12 @@ import android.os.Message;
  * 时间：2018/3/14
  * 说明：
  */
-class MBannerHandler extends Handler {
+class MBannerHandler extends Handler implements Runnable {
     public static final int CHANGE_POSITION = 974;
     
     private MBanner mBanner;
+    private int currentPosition = -1;
+    private int nextPosition = -1;
 
     public MBannerHandler(MBanner mBanner) {
         this.mBanner = mBanner;
@@ -27,17 +29,21 @@ class MBannerHandler extends Handler {
         }
     }
 
+
     void postDelayed(final int currentPosition, final int nextPosition, long delayMillis) {
-        this.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mBanner.getAdapter().getViewList().get(currentPosition).onDeselect();
-                MBannerHandler.this.sendMessage(MBannerHandler.this.obtainMessage(CHANGE_POSITION, nextPosition));
-            }
-        }, delayMillis);
+        this.currentPosition = currentPosition;
+        this.nextPosition = nextPosition;
+        this.removeCallbacks(this);
+        this.postDelayed(this, delayMillis);
     }
 
     public MBanner getMBanner() {
         return mBanner;
+    }
+
+    @Override
+    public void run() {
+        mBanner.getAdapter().getViewList().get(currentPosition).onDeselect();
+        MBannerHandler.this.sendMessage(MBannerHandler.this.obtainMessage(CHANGE_POSITION, nextPosition));
     }
 }
