@@ -68,4 +68,11 @@ public class MBanner extends ViewPager {
         }
     }
 
+    public int getCurrentPageIndex() {
+        return currentPageIndex;
+    }
+
+    public void setCurrentPageIndex(int currentPageIndex) {
+        this.currentPageIndex = currentPageIndex;
+    }
 }
